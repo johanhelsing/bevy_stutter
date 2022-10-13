@@ -11,16 +11,27 @@ use bevy::{
 
 pub struct StutterPlugin;
 
-#[derive(Clone)]
+#[derive(Reflect, Clone)]
 pub struct Stutter {
     pub probability: f32,
     pub millis: u64,
 }
 
-#[derive(Component, Clone)]
+impl Default for Stutter {
+    fn default() -> Self {
+        Self {
+            probability: 0.02,
+            millis: 16,
+        }
+    }
+}
+
+#[derive(Component, Reflect, Clone, Default)]
+#[reflect(Component)]
 pub struct RenderStutter(pub Stutter);
 
-#[derive(Component, Clone)]
+#[derive(Component, Reflect, Clone, Default)]
+#[reflect(Component)]
 pub struct UpdateStutter(pub Stutter);
 
 impl ExtractComponent for RenderStutter {
@@ -36,6 +47,8 @@ impl Plugin for StutterPlugin {
     fn build(&self, app: &mut App) {
         app.add_system(update_stutter);
         app.add_plugin(ExtractComponentPlugin::<RenderStutter>::default());
+        app.register_type::<UpdateStutter>();
+        app.register_type::<RenderStutter>();
         let render_app = app.get_sub_app_mut(RenderApp);
         if let Ok(render_app) = render_app {
             render_app.add_system_to_stage(RenderStage::Render, render_stutter);
