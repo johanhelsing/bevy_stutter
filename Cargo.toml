@@ -4,5 +4,8 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-bevy = "0.8"
+bevy = { version = "0.8", default-features = false, features = ["render"] }
 fastrand = "1.8"
+
+[dev-dependencies]
+bevy = "0.8"
