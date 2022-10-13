@@ -7,5 +7,9 @@ edition = "2021"
 bevy = { version = "0.8", default-features = false, features = ["render"] }
 fastrand = "1.8"
 
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+wasm_thread = "0.2.0"
+instant = "0.1.12" # best to match bevy version
+
 [dev-dependencies]
 bevy = "0.8"

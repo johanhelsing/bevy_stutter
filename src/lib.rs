@@ -1,5 +1,3 @@
-use std::{thread::sleep, time::Duration};
-
 use bevy::{
     ecs::query::QueryItem,
     prelude::*,
@@ -8,6 +6,24 @@ use bevy::{
         RenderApp, RenderStage,
     },
 };
+fn sleep(millis: u64) {
+    #[cfg(not(target_arch = "wasm32"))]
+    {
+        use std::time::Duration;
+        std::thread::sleep(Duration::from_millis(millis));
+    }
+
+    #[cfg(target_arch = "wasm32")]
+    {
+        use instant::now;
+
+        let start = now();
+
+        while now() - start < millis as f64 {
+            // simple stupid busy wait
+        }
+    }
+}
 
 pub struct StutterPlugin;
 
@@ -60,7 +76,7 @@ fn render_stutter(stutters: Query<&RenderStutter>) {
     for stutter in stutters.iter() {
         if fastrand::f32() < stutter.0.probability {
             info!("sleeping for {} in render", stutter.0.millis);
-            sleep(Duration::from_millis(stutter.0.millis));
+            sleep(stutter.0.millis);
         }
     }
 }
@@ -69,7 +85,7 @@ fn update_stutter(stutters: Query<&UpdateStutter>) {
     for stutter in stutters.iter() {
         if fastrand::f32() < stutter.0.probability {
             info!("sleeping for {} in update", stutter.0.millis);
-            sleep(Duration::from_millis(stutter.0.millis));
+            sleep(stutter.0.millis);
         }
     }
 }
