@@ -6,22 +6,13 @@ use bevy::{
         RenderApp, RenderStage,
     },
 };
+use instant::now;
+
 fn sleep(millis: u64) {
-    #[cfg(not(target_arch = "wasm32"))]
-    {
-        use std::time::Duration;
-        std::thread::sleep(Duration::from_millis(millis));
-    }
+    let start = now();
 
-    #[cfg(target_arch = "wasm32")]
-    {
-        use instant::now;
-
-        let start = now();
-
-        while now() - start < millis as f64 {
-            // simple stupid busy wait
-        }
+    while now() - start < millis as f64 {
+        // simple stupid busy wait
     }
 }
 
